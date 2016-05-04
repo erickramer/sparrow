@@ -1,16 +1,7 @@
 import pyRserve
 import re
-
-RINIT = """
-library(deployr)
-service = get(load("%s"))
-"""
-
-RPREDICT = """
-print(service)
-endpoint = get_endpoint(service, "%s")
-print(endpoint)
-"""
+from rconnection import RConnectionBuilder
+from endpoint import Endpoint
 
 class Service(object):
 
@@ -21,49 +12,55 @@ class Service(object):
 
 	# public methods
 
-	def __init__(self, rdata, rhost="localhost", rport=6311):
-		self.rhost = rhost
-		self.rdata = rdata
-		self.rport = rport
+	def __init__(self, conn_builder, data):
 
-		try:
-			self.conn = pyRserve.connect(host = rhost, port = rport)
-		except:
-			print "Could not connect to host"
-			raise
+		self.conn_builder = conn_builder
 
-		self._init_r_session()
+		self.conn = conn_builder() # establish connection for service
+		self.data = data
+
+		self.init_r_session()
+		self.build_endpoints()
 
 	def predict(self, endpoint, data):
-
-		self.conn.eval("endpoint = get_endpoint(service, \"%s\")" % endpoint)
-		self.conn.r.data = data
-		return self.conn.eval("predict(endpoint, data)")
+		return self.get_endpoint(endpoint).predict(data)
 
 	def list_endpoints(self):
-		return self.conn.eval("list_endpoints(service)")
+		endpoints = self.conn.eval("list_endpoints(myservice)")
+		if isinstance(endpoints, str):
+			return [endpoints]
+		else:
+			return endpoints
+
+	def get_endpoint(self, name):
+		return self.endpoints[name]
 
 	# private methods
 
-	def _init_r_session(self):
+	def init_r_session(self):
 		self.conn.eval("library(deployr)")
-		self.conn.eval("service = get(load(\"%s\"))" % self.rdata)
+		self.conn.eval("myservice = get(load(\"%s\"))" % self.data)
+
+	def build_endpoints(self):
+		names = self.list_endpoints()
+		self.endpoints = {}
+
+		for name in names:
+			self.endpoints[name] = Endpoint(self.conn_builder, self.data, name)
+
+	def rport(self):
+		pass
+
+	def pyport(self):
+		pass
+
+	def rurl(self):
+		pass
 
 
-
-
-	
 
 
 if __name__ == "__main__":
-	service = Service("/Users/Eric/Projects/deployr/iris_service.Rdata")
+	builder = RConnectionBuilder()
 
-	f = open("../../iris.json")
-
-	lines = ""
-	for line in f:
-		line = re.sub("[\n\t ]", "", line)
-		lines += re.sub('"', r'\"', line)
-	lines = '"' + lines + '"'
-	print lines
-	print service.predict("iris", lines)
+	s = Service(builder, "/Users/Eric/Projects/deployr/iris.Rdata")
