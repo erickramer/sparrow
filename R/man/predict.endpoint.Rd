@@ -4,9 +4,17 @@
 \alias{predict.endpoint}
 \title{Predict}
 \usage{
-\method{predict}{endpoint}(endpoint, json = NULL)
+\method{predict}{endpoint}(endpoint, newdata = NULL)
+}
+\arguments{
+\item{endpoint}{An endpoint object}
+
+\item{newdata}{A JSON object for input}
 }
 \description{
 Predict from an endpoint
+}
+\details{
+This assumes that the incoming data
 }
 

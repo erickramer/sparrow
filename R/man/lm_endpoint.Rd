@@ -4,7 +4,14 @@
 \alias{lm_endpoint}
 \title{Create an endpoint from a \code{\link{lm}} object}
 \usage{
-lm_endpoint(model, preprocess, predict, postprocess)
+lm_endpoint(model, predict = NULL, ...)
+}
+\arguments{
+\item{model}{A model object. The model from which to build the endpoint}
+
+\item{predict}{A predict function. The function to use to predict from the model}
+
+\item{...}{additional arguments passed to predict}
 }
 \description{
 Create an endpoint from a \code{\link{lm}} object

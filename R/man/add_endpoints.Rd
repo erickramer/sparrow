@@ -6,6 +6,9 @@
 \usage{
 add_endpoints(s, ...)
 }
+\arguments{
+\item{...}{named arguments for the endpoints}
+}
 \description{
 Adds endpoints to a service
 }

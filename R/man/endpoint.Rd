@@ -4,7 +4,7 @@
 \alias{endpoint}
 \title{Create a custom endpoint}
 \usage{
-endpoint(model, preprocess = NULL, predict = NULL, postprocess = NULL)
+endpoint(model, predict = NULL, ...)
 }
 \description{
 This creates an API endpoint. Model specific preprocessing and postprocessing
