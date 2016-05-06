@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Nest
+{% endblock %}
+
+{% block content %}
+<div class="container">
+	<div class="row">
+	  <div class="one-half column" style="margin-top: 10%">
+	    <h4>You have {{n_hatchlings}} hatchlings</h4>
+	   </div>
+	</div>
+</div>
+
+
+<div class="container">
+	<div class="row">
+	<table class="u-full-width">
+
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Model type</th>
+				<th>Status</th>
+			</tr>
+		</thead>
+
+		<tbody>
+		{% for s in summary %}
+			<tr>
+				<td><a href="/api/{{s.name}}">{{s.name}}</a></td>
+				<td>{{s.class}}</td>
+				<td>{{s.status}}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+
+	</table>
+	</div>
+</div>
+
+
+{% endblock %}

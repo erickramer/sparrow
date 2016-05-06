@@ -1,0 +1,123 @@
+#!/Users/Eric/anaconda/bin/python
+
+import sys
+from flask import Flask, request, json, render_template
+import argparse
+import re
+import datetime
+import os
+import shutil
+import sh
+from sparrow.rconnection import RConnectionBuilder
+from sparrow.service import Service
+from pkg_resources import resource_filename
+
+def nest():
+
+	nest_file = args['nest'][0]
+	nest = re.sub(".[Rr]*dat[a]*$", "", nest_file)
+
+	directory = args['dir'][0]
+	if directory is None:
+		directory = "./%s_%s" % (nest, datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S'))
+
+	if os.path.exists(directory):
+		raise IOError("Directory for deployr already exists. Please provide path to new directory for create")
+
+	if not os.path.isfile(nest_file):
+		raise IOError("%s does not appear to be a valid file" % nest_file)
+
+	# create directory structure
+	os.mkdir(directory)
+	os.mkdir(directory + '/R')
+	os.mkdir(directory + '/logs')
+	os.mkdir(directory + '/static')
+	
+	# copy over necessary files
+	shutil.copyfile(nest_file, directory + '/R/nest.Rdata')
+	shutil.copytree(resource_filename("sparrow", "templates"), directory + '/templates')
+
+	# install bower components
+	os.chdir(directory + "/static")
+	sh.bower("install", "skeleton")
+
+def hatch():
+
+	app = Flask(__name__)
+
+	## Defining routes
+
+	@app.route('/')
+	@app.route('/home')
+	def home():
+		return render_template("home.html")
+
+	@app.route('/api/<hatchling>', methods=['GET', 'POST'])
+	def predict(hatchling):
+		if request.method == 'POST':
+			data = json.dumps(request.form)
+			print data
+			return s.predict(hatchling, data)
+		elif request.method == 'GET':
+			schema = s.get_endpoint(hatchling).schema()
+			classes = schema['classes']
+			xlevels = schema['xlevels']
+			return render_template('form.html', name=hatchling, classes=classes,
+				xlevels=xlevels)
+
+	@app.route('/api/<hatchling>/info')
+	def info(egg):
+		return "Getting info for %s" % egg
+
+	@app.route('/nest')
+	def nest():
+		summary = s.summary()
+		n_hatchlings = len(summary)
+		return render_template('nest.html', summary=summary, n_hatchlings=n_hatchlings)
+
+	## Preparing app	
+	
+	directory = args['dir'][0]
+	directory = os.path.abspath(directory)
+	if not os.path.exists(directory):
+		raise IOError("%s does not appear to exist. Try `sparrow hatch` first" % directory)
+
+
+	nest = directory + '/R/nest.Rdata'
+	rport = args['rport'][0]
+	rurl = args['rurl'][0]
+	
+	rbuilder = RConnectionBuilder() 
+	s = Service(rbuilder, nest)
+	
+	app.root_path = directory
+	app.run(debug = True)
+
+
+def shutdown():
+	pass
+
+
+if __name__ == "__main__":
+
+	parser = argparse.ArgumentParser(description = "Deploy deployr services as an API")
+	parser.add_argument("command", nargs = 1, help = "Nest, hatch or shutdown a sparrow service")
+	parser.add_argument("--nest",  nargs = 1, help = "Filename of nest created with sparrow R package")
+	parser.add_argument("--dir", nargs=1, type=str, help = "Location of files for hatching", default=".")
+	parser.add_argument("--pyport", dest="pyport", type=int, nargs=1, help="Port for the python server", default=1000)
+	parser.add_argument("--rport", dest="rport", type=int, nargs=1, help="Port for the Rserver", default=6311)
+	parser.add_argument("--rurl", dest="rurl", type=str, nargs=1, help="URL for the Rserver", default="localhost")
+
+	args = vars(parser.parse_args())
+	
+	cmd = args['command'][0].lower()
+
+	if cmd == "nest":
+		nest()
+	elif cmd == "hatch":
+		hatch()
+	elif cmd == "shutdown":
+		shutdown()
+	else:
+		raise LookupError("%s unknown command for deployr" % cmd)
+	

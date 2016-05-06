@@ -45,6 +45,4 @@ class RConnectionBuilder(object):
 		return RConnection(conn)
 
 if __name__ == "__main__":
-	rbuilder = RConnectionBuilder()
-	rconn = rbuilder()
-
+	pass

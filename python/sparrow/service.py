@@ -2,6 +2,7 @@ import pyRserve
 import re
 from rconnection import RConnectionBuilder
 from endpoint import Endpoint
+import numpy
 
 class Service(object):
 
@@ -35,6 +36,9 @@ class Service(object):
 	def get_endpoint(self, name):
 		return self.endpoints[name]
 
+	def summary(self):
+		return [e.summary() for e in self.endpoints.values()]
+
 	# private methods
 
 	def init_r_session(self):
@@ -48,19 +52,11 @@ class Service(object):
 		for name in names:
 			self.endpoints[name] = Endpoint(self.conn_builder, self.data, name)
 
-	def rport(self):
-		pass
-
-	def pyport(self):
-		pass
-
-	def rurl(self):
-		pass
-
-
-
 
 if __name__ == "__main__":
 	builder = RConnectionBuilder()
 
-	s = Service(builder, "/Users/Eric/Projects/deployr/iris.Rdata")
+	s = Service(builder, "/Users/Eric/Projects/deployr/data/iris.Rdata")
+
+	e = s.get_endpoint("iris")
+	schema = e.schema()

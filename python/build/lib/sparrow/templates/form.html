@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}
+{{name}}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+	<div class="row" style="margin-top: 10%">
+		<h4>{{name}}</h4>
+	</div>
+
+	<div class="row">
+		<form action="/api/{{name}}" method="post">
+			{% for feature, class in classes %}
+				<div class="6 columns">
+					{% if class == 'numeric' %}
+						<label for={{feature}}>{{feature}}</label>
+						<input class="u-full-width" type="number" name="{{feature}}">
+					{% elif class == 'factor' %}
+						<label for="{{feature}}">{{feature}}</label>
+						<select class="u-full-width" name="{{feature}}">
+						{% for option in xlevels[feature] %}
+							<option value="{{option}}">{{option}}</option>
+						{% endfor %}
+						</select>
+					{% endif %}
+				</div>
+			{% endfor %}
+
+			<input class="button-primary" type="submit" value="Submit">
+		</form>
+	</div>
+</div>
+{% endblock %}

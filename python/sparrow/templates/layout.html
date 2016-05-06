@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href={{url_for('static', filename="bower_components/skeleton/css/normalize.css")}}>
+  <link rel="stylesheet" href={{url_for('static', filename="bower_components/skeleton/css/skeleton.css")}}>
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href={{url_for('static', filename="bower_components/skeleton/images/favicon.png") }}>
+
+  <title>{% block title %}{% endblock %}</title>
+
+</head>
+<body>
+{% block content %}{% endblock %}
+</body>
+</html>
