@@ -5,6 +5,7 @@
 #'
 #' @export
 #'
+
 endpoint <- function(model,
                      predict = NULL,
                      ...){
@@ -19,7 +20,6 @@ endpoint <- function(model,
   }
 
 }
-
 
 #' Predict
 #'
