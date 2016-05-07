@@ -14,10 +14,10 @@ from pkg_resources import resource_filename
 
 def nest():
 
-	nest_file = args['nest'][0]
+	nest_file = args['nest']
 	nest = re.sub(".[Rr]*dat[a]*$", "", nest_file)
 
-	directory = args['dir'][0]
+	directory = args['dir']
 	if directory is None:
 		directory = "./%s_%s" % (nest, datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S'))
 
@@ -36,10 +36,12 @@ def nest():
 	# copy over necessary files
 	shutil.copyfile(nest_file, directory + '/R/nest.Rdata')
 	shutil.copytree(resource_filename("sparrow", "templates"), directory + '/templates')
+	shutil.copytree(resource_filename("sparrow", "js"), directory + '/static/js')
 
 	# install bower components
 	os.chdir(directory + "/static")
 	sh.bower("install", "skeleton")
+	sh.bower("install", "jquery")
 
 def hatch():
 
@@ -77,21 +79,21 @@ def hatch():
 
 	## Preparing app	
 	
-	directory = args['dir'][0]
+	directory = args['dir']
 	directory = os.path.abspath(directory)
 	if not os.path.exists(directory):
 		raise IOError("%s does not appear to exist. Try `sparrow hatch` first" % directory)
 
-
 	nest = directory + '/R/nest.Rdata'
-	rport = args['rport'][0]
-	rurl = args['rurl'][0]
-	
-	rbuilder = RConnectionBuilder() 
+	rport = args['rport']
+	rurl = args['rurl']
+	pyport = args['pyport']
+
+	rbuilder = RConnectionBuilder(port = rport, host = rurl) 
 	s = Service(rbuilder, nest)
 	
 	app.root_path = directory
-	app.run(debug = True)
+	app.run(debug = True, port = pyport)
 
 
 def shutdown():
@@ -101,16 +103,16 @@ def shutdown():
 if __name__ == "__main__":
 
 	parser = argparse.ArgumentParser(description = "Deploy deployr services as an API")
-	parser.add_argument("command", nargs = 1, help = "Nest, hatch or shutdown a sparrow service")
-	parser.add_argument("--nest",  nargs = 1, help = "Filename of nest created with sparrow R package")
-	parser.add_argument("--dir", nargs=1, type=str, help = "Location of files for hatching", default=".")
-	parser.add_argument("--pyport", dest="pyport", type=int, nargs=1, help="Port for the python server", default=1000)
-	parser.add_argument("--rport", dest="rport", type=int, nargs=1, help="Port for the Rserver", default=6311)
-	parser.add_argument("--rurl", dest="rurl", type=str, nargs=1, help="URL for the Rserver", default="localhost")
+	parser.add_argument("command", help = "Nest, hatch or shutdown a sparrow service")
+	parser.add_argument("--nest", type=str, help = "Filename of nest created with sparrow R package")
+	parser.add_argument("--dir", type=str, help = "Directory to unpack nest", default=".")
+	parser.add_argument("--pyport", dest="pyport", type=int, help="Port for the python server", default=5000)
+	parser.add_argument("--rport", dest="rport", type=int, help="Port for the Rserver", default=6311)
+	parser.add_argument("--rurl", dest="rurl", type=str, help="URL for the Rserver", default="localhost")
 
 	args = vars(parser.parse_args())
-	
-	cmd = args['command'][0].lower()
+
+	cmd = args['command'].lower()
 
 	if cmd == "nest":
 		nest()

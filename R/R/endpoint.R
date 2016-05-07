@@ -53,7 +53,7 @@ predict.endpoint <- function(endpoint,
     transpose(df[,2:ncol(df)]) %>%
       list(info = ., prediction = p) %>%
       transpose
-  } else list(prediction=p)
+  } else map(p, function(x) list(prediction=x))
 
   toJSON(predictions)
 

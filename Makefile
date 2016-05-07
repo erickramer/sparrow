@@ -15,4 +15,4 @@ hatch: nest install
 	sparrow hatch --dir ~/Projects/mydir --rport 6311
 
 nest: install
-	rm -rf ~/Projects/mydir; sparrow nest --dir ~/Projects/mydir --nest ~/Projects/deployr/data/iris.Rdata
+	rm -rf ~/Projects/mydir; sparrow nest --dir ~/Projects/mydir --nest ~/Projects/sparrow/data/iris.Rdata

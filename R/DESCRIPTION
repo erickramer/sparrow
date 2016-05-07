@@ -1,12 +1,12 @@
-Package: deployr
+Package: sparrow
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Deploy R models as a REST API
 Version: 0.1
 Date: 2016-04-27
-Author: Who wrote it
+Author: Eric Kramer
 Depends: purrr, RJSONIO, dplyr
-Maintainer: Who to complain to <yourfault@somewhere.net>
+Maintainer: Eric Kramer <ericransomkramer@gmail.com>
 Description: More about what it does (maybe more than one line)
-License: What license is it under?
+License: GPL3
 LazyData: TRUE
 RoxygenNote: 5.0.1

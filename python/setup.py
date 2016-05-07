@@ -8,4 +8,4 @@ setup(name='Sparrow',
 	author='Eric kramer',
 	author_email='eric.kramer@dataiku.com',
 	packages=['sparrow'],
-	package_data={'sparrow' : ['templates/*.html']})
+	package_data={'sparrow' : ['templates/*.html', 'js/*.js']})
