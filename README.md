@@ -22,4 +22,59 @@ cd sparrow
 sudo make install
 ```
 
-These include: [Flask](http://flask.pocoo.org/), [Rserve](https://rforge.net/Rserve/), [pyRserve](https://pypi.python.org/pypi/pyRserve), [bower](http://bower.io/)
+These include: [Flask](http://flask.pocoo.org/), [Rserve](https://rforge.net/Rserve/), [pyRserve](https://pypi.python.org/pypi/pyRserve), [bower]
+
+## Quickstart
+
+With the Sparrow R package, you create a **nest**: a collection of models that serve real-time predictions. You can then deploy this **nest** as a WebApp
+
+### Making a nest with the R package
+
+First lets load the sparrow package
+
+```
+library(sparrow)
+```
+
+Now lets make some models
+
+```
+m_width = lm(Sepal.Width ~ ., data=iris)
+m_height = lm(Sepal.Height ~ ., data=iris)
+```
+
+Now, lets turn those models into eggs. These eggs send and receive JSON formatted text, rather than the data.frames
+
+``` 
+e_width = egg(m_width, se.fit=T)
+e_height = egg(m_width, interval="confidence")
+```
+
+```egg``` will pass any arguments after a model to ```predict``` 
+
+Finally, lets put our eggs into a nest and package that nest
+
+```
+n = nest() %>%
+	add_eggs(width = e_width, height=e_height) %>%
+	package(file = "iris.Rdata")
+```
+
+### Deploying the nest
+
+We have two steps to deploy our nest. We have to first make a directory for our ```nest``` with all the necessary files, then we have to ```hatch``` our eggs (a.k.a.) deploy the models.
+
+First lets make the directory. In a terminal, type
+
+```
+sparrow nest --dir nest_directory --nest iris.Rdata 
+```
+
+Now, lets hatch those eggs!
+
+```
+cd nest_directory
+sparrow hatch
+```
+
+If you go to [http://localhost:5000/](http://localhost:5000/), you should have sparrow up and running!
