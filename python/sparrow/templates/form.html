@@ -20,7 +20,7 @@
 
 		<!-- FORM -->
 		<div class="one-half column">
-			<form url="/api/{{name}}" method="post" id="form">
+			<form url="/api/{{name}}/predict" method="post" id="form">
 				{% for feature, class in classes %}
 					<div>
 						{% if class == 'numeric' %}

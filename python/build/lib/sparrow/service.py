@@ -10,7 +10,6 @@ class Service(object):
 	This object communicates with an R-service made with 
 	the deployr package
 	"""
-
 	# public methods
 
 	def __init__(self, conn_builder, data):
@@ -27,7 +26,8 @@ class Service(object):
 		return self.get_endpoint(endpoint).predict(data)
 
 	def list_endpoints(self):
-		endpoints = self.conn.eval("list_endpoints(myservice)")
+		endpoints = self.conn.eval("list_eggs(myservice)")
+
 		if isinstance(endpoints, str):
 			return [endpoints]
 		else:
@@ -42,7 +42,7 @@ class Service(object):
 	# private methods
 
 	def init_r_session(self):
-		self.conn.eval("library(deployr)")
+		self.conn.eval("library(sparrow)")
 		self.conn.eval("myservice = get(load(\"%s\"))" % self.data)
 
 	def build_endpoints(self):
@@ -56,7 +56,7 @@ class Service(object):
 if __name__ == "__main__":
 	builder = RConnectionBuilder()
 
-	s = Service(builder, "/Users/Eric/Projects/deployr/data/iris.Rdata")
+	s = Service(builder, "/Users/Eric/Projects/sparrow/data/iris.Rdata")
 
 	e = s.get_endpoint("iris")
 	schema = e.schema()

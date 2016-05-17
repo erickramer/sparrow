@@ -22,7 +22,7 @@ cd sparrow
 sudo make install
 ```
 
-These include: [Flask](http://flask.pocoo.org/), [Rserve](https://rforge.net/Rserve/), [pyRserve](https://pypi.python.org/pypi/pyRserve), [bower]
+These include: [Flask](http://flask.pocoo.org/), [Rserve](https://rforge.net/Rserve/), [pyRserve](https://pypi.python.org/pypi/pyRserve), [bower](http://bower.io/)
 
 ## Quickstart
 
@@ -40,14 +40,14 @@ Now lets make some models
 
 ```
 m_width = lm(Sepal.Width ~ ., data=iris)
-m_height = lm(Sepal.Height ~ ., data=iris)
+m_length = lm(Sepal.Length ~ ., data=iris)
 ```
 
 Now, lets turn those models into eggs. These eggs send and receive JSON formatted text, rather than the data.frames
 
 ``` 
 e_width = egg(m_width, se.fit=T)
-e_height = egg(m_width, interval="confidence")
+e_height = egg(m_length, interval="confidence")
 ```
 
 ```egg``` will pass any arguments after a model to ```predict``` 
@@ -57,7 +57,7 @@ Finally, lets put our eggs into a nest and package that nest
 ```
 n = nest() %>%
 	add_eggs(width = e_width, height=e_height) %>%
-	package(file = "iris.Rdata")
+	bundle(file = "iris.Rdata")
 ```
 
 ### Deploying the nest

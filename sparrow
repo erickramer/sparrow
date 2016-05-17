@@ -52,11 +52,10 @@ def hatch():
 	def home():
 		return render_template("home.html")
 
-	@app.route('/api/<hatchling>', methods=['GET', 'POST'])
+	@app.route('/api/<hatchling>/predict', methods=['GET', 'POST'])
 	def predict(hatchling):
 		if request.method == 'POST':
 			data = json.dumps(request.form)
-			print data
 			return s.predict(hatchling, data)
 		elif request.method == 'GET':
 			schema = s.get_endpoint(hatchling).schema()
@@ -65,9 +64,12 @@ def hatch():
 			return render_template('form.html', name=hatchling, classes=classes,
 				xlevels=xlevels)
 
+	@app.route('/api/<hatchling>')
 	@app.route('/api/<hatchling>/info')
-	def info(egg):
-		return "Getting info for %s" % egg
+	def info(hatchling):
+		model_summary = s.get_endpoint(hatchling).model_summary()
+		print model_summary
+		return render_template('hatchling.html', name=hatchling, model_summary=model_summary)
 
 	@app.route('/nest')
 	def nest():
